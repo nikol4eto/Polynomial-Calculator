@@ -3,7 +3,7 @@
 #include <algorithm>
 
 using namespace std;
-
+//FIRST STEP DONE
 // Function to compute the greatest common divisor
 int gcd(int a, int b) {
     while (b != 0) {
