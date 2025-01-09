@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 //FIRST STEP DONE
@@ -31,7 +30,7 @@ pair<int, int> addRational(const pair<int, int>& r1, const pair<int, int>& r2) {
     int numerator = r1.first * r2.second + r2.first * r1.second;
     int denominator = r1.second * r2.second;
     pair<int, int> result = { numerator, denominator };
-    simplify(result); 
+    simplify(result);
     return result;
 }
 
@@ -114,26 +113,62 @@ vector<pair<int, int>> addPolynomials(const vector<pair<int, int>>& p1, const ve
 
 
 int main() {
-    cout << "Welcome to Polynomial Calculator - a mini project intended to work with polynomials with rational coefficients.\n";
+    int numberOfChoice;
+    cout << "Welcome to Polynomial Calculator - ";
+    cout << "a mini project intended to work with polynomials with rational coefficients." << endl;
 
-    // Input Polynomial P(x)
-    vector<pair<int, int>> polyP;
-    cout << "Enter Polynomial P(x)\n";
-    inputPolynomial(polyP);
-    cout << "P(x) = ";
-    displayPolynomial(polyP);
+    while (true) {
+        cout << "Choose one of the following functionalities:" << endl;
+        cout << "1) Add polynomials" << endl;
+        cout << "2) Subtract polynomials" << endl;
+        cout << "3) Multiply polynomials" << endl;
+        cout << "4) Divide polynomials" << endl;
+        cout << "5) Multiply polynomial by scalar" << endl;
+        cout << "6) Find value of polynomial at a given number" << endl;
+        cout << "7) Find GCD of two polynomials" << endl;
+        cout << "8) Display Vieta's formulas for a given polynomial" << endl;
+        cout << "9) Represent a polynomial in powers of (x+a)" << endl;
+        cout << "10) Factor polynomial and find its rational roots" << endl;
+        cout << "11) Quit program" << endl;
+        cout << "Enter your option: " << endl;
 
-    // Input Polynomial Q(x)
-    vector<pair<int, int>> polyQ;
-    cout << "Enter Polynomial Q(x)\n";
-    inputPolynomial(polyQ);
-    cout << "Q(x) = ";
-    displayPolynomial(polyQ);
+        cin >> numberOfChoice;
+        if (numberOfChoice == 11) {
+            cout << "I hope i helped, have a nice day!" << endl;
+            break;
+        }
+        switch (numberOfChoice) {
+        case 1: {
 
-    // Add Polynomials
-    vector<pair<int, int>> polyResult = addPolynomials(polyP, polyQ);
-    cout << "P(x) + Q(x) = ";
-    displayPolynomial(polyResult);
+            // Input Polynomial P(x)
+            vector<pair<int, int>> polyP;
+            cout << "Enter Polynomial P(x)\n";
+            inputPolynomial(polyP);
+            cout << "P(x) = ";
+            displayPolynomial(polyP);
+
+            // Input Polynomial Q(x)
+            vector<pair<int, int>> polyQ;
+            cout << "Enter Polynomial Q(x)\n";
+            inputPolynomial(polyQ);
+            cout << "Q(x) = ";
+            displayPolynomial(polyQ);
+
+            // Add Polynomials
+            vector<pair<int, int>> polyResult = addPolynomials(polyP, polyQ);
+            cout << "P(x) + Q(x) = ";
+            displayPolynomial(polyResult);
+        }
+              break;
+        case 2: {
+        
+        }
+              break;
+
+        default:
+            cout << "Invalid input. Try again!" << endl;
+        }
+    }
 
     return 0;
 }
