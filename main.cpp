@@ -119,6 +119,24 @@ vector<pair<int, int>> performPolynomialOperation(
     return result;
 }
 
+vector<pair<int, int>> multiplyPolynomials(const vector<pair<int, int>>& p1, const vector<pair<int, int>>& p2) {
+    size_t degree1 = p1.size();
+    size_t degree2 = p2.size();
+    vector<pair<int, int>> result(degree1 + degree2 - 1, { 0, 1 }); // Initialize result with 0s
+
+    for (size_t i = 0; i < degree1; ++i) {
+        for (size_t j = 0; j < degree2; ++j) {
+            int numerator = p1[i].first * p2[j].first;
+            int denominator = p1[i].second * p2[j].second;
+
+            // Add to the existing term in the result
+            pair<int, int> term = { numerator, denominator };
+            result[i + j] = addRational(result[i + j], term);
+        }
+    }
+    return result;
+}
+
 // Add two polynomials
 vector<pair<int, int>> addPolynomials(const vector<pair<int, int>>& p1, const vector<pair<int, int>>& p2) {
     return performPolynomialOperation(p1, p2, addRational);
@@ -182,6 +200,7 @@ int main() {
 
             // Perform and display addition
             performAndDisplayOperation("+", polyP, polyQ, addPolynomials);
+            cout << endl;
         }
               break;
         case 2: {
@@ -189,8 +208,23 @@ int main() {
             vector<pair<int, int>> polyQ = inputAndDisplayPolynomial("Q(x) ");
 
             performAndDisplayOperation("-", polyP, polyQ, subtractPolynomials); 
-           
+            cout << endl;
+        }
+              break;
 
+        case 3: {
+            vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x) ");
+            vector<pair<int, int>> polyQ = inputAndDisplayPolynomial("Q(x) ");
+
+            cout << "P(x) * Q(x) = ";
+            vector<pair<int, int>> result = multiplyPolynomials(polyP, polyQ);
+            displayPolynomial(result);
+            cout << endl; // Add blank line after the operation
+        }
+              break;
+
+        case 4: {
+          
         }
               break;
 
