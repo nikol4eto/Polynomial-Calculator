@@ -2,7 +2,7 @@
 #include <vector>
 
 using namespace std;
-//FIRST STEP DONE
+
 // Function to compute the greatest common divisor
 int gcd(int a, int b) {
     while (b != 0) {
@@ -34,16 +34,24 @@ pair<int, int> addRational(const pair<int, int>& r1, const pair<int, int>& r2) {
     return result;
 }
 
+// Subtract two rational numbers
+pair<int, int> subtractRational(const pair<int, int>& r1, const pair<int, int>& r2) {
+    int numerator = r1.first * r2.second - r2.first * r1.second;
+    int denominator = r1.second * r2.second;
+    pair<int, int> result = { numerator, denominator };
+    simplify(result);
+    return result;
+}
 
 // Function to input a polynomial
 void inputPolynomial(vector<pair<int, int>>& poly) {
     int degree;
-    cout << "Enter the degree of your polynomial >> ";
+    cout << "Enter the degree of your polynomial >>  ";
     cin >> degree;
 
     poly.resize(degree + 1);
     for (int i = degree; i >= 0; --i) {
-        cout << "Enter coefficient before x^" << i;
+        cout << "Enter coefficient before x^" << i << ">> ";
         int numerator, denominator = 1;
         char slash;
 
@@ -87,12 +95,15 @@ void displayPolynomial(const vector<pair<int, int>>& poly) {
 
     cout << endl;
 }
+// Perform addition or subtraction on two polynomials
+vector<pair<int, int>> performPolynomialOperation(
+    const vector<pair<int, int>>& p1,
+    const vector<pair<int, int>>& p2,
+    pair<int, int>(*operation)(const pair<int, int>&, const pair<int, int>&)) {
 
-// Function to add two polynomials
-vector<pair<int, int>> addPolynomials(const vector<pair<int, int>>& p1, const vector<pair<int, int>>& p2) {
     vector<pair<int, int>> result;
-
     size_t maxSize = max(p1.size(), p2.size());
+
     for (size_t i = 0; i < maxSize; ++i) {
         int numerator1 = (i < p1.size()) ? p1[i].first : 0;
         int denominator1 = (i < p1.size()) ? p1[i].second : 1;
@@ -100,17 +111,43 @@ vector<pair<int, int>> addPolynomials(const vector<pair<int, int>>& p1, const ve
         int numerator2 = (i < p2.size()) ? p2[i].first : 0;
         int denominator2 = (i < p2.size()) ? p2[i].second : 1;
 
-        // Rational numbers!
-        int numerator = numerator1 * denominator2 + numerator2 * denominator1;
-        int denominator = denominator1 * denominator2;
-
-        // the result as a simplified pair
-        result.push_back({ numerator, denominator });
+        pair<int, int> term1 = { numerator1, denominator1 };
+        pair<int, int> term2 = { numerator2, denominator2 };
+        result.push_back(operation(term1, term2));
     }
 
     return result;
 }
 
+// Add two polynomials
+vector<pair<int, int>> addPolynomials(const vector<pair<int, int>>& p1, const vector<pair<int, int>>& p2) {
+    return performPolynomialOperation(p1, p2, addRational);
+}
+
+// Subtract two polynomials
+vector<pair<int, int>> subtractPolynomials(const vector<pair<int, int>>& p1, const vector<pair<int, int>>& p2) {
+    return performPolynomialOperation(p1, p2, subtractRational);
+}
+
+// Input and display a polynomial
+vector<pair<int, int>> inputAndDisplayPolynomial(const string& polyName) {
+    vector<pair<int, int>> poly;
+    cout << "Enter Polynomial " << polyName << "\n";
+    inputPolynomial(poly);
+    cout << polyName << " = ";
+    displayPolynomial(poly);
+    return poly;
+}
+
+// Perform and display a polynomial operation
+void performAndDisplayOperation(const string& operationName,
+    const vector<pair<int, int>>& poly1,
+    const vector<pair<int, int>>& poly2,
+    vector<pair<int, int>>(*operation)(const vector<pair<int, int>>&, const vector<pair<int, int>>&)) {
+    cout << "P(x) " << operationName << " Q(x) = ";
+    vector<pair<int, int>> result = operation(poly1, poly2);
+    displayPolynomial(result);
+}
 
 int main() {
     int numberOfChoice;
@@ -139,29 +176,21 @@ int main() {
         }
         switch (numberOfChoice) {
         case 1: {
+            // Input Polynomials
+            vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x) ");
+            vector<pair<int, int>> polyQ = inputAndDisplayPolynomial("Q(x) ");
 
-            // Input Polynomial P(x)
-            vector<pair<int, int>> polyP;
-            cout << "Enter Polynomial P(x)\n";
-            inputPolynomial(polyP);
-            cout << "P(x) = ";
-            displayPolynomial(polyP);
-
-            // Input Polynomial Q(x)
-            vector<pair<int, int>> polyQ;
-            cout << "Enter Polynomial Q(x)\n";
-            inputPolynomial(polyQ);
-            cout << "Q(x) = ";
-            displayPolynomial(polyQ);
-
-            // Add Polynomials
-            vector<pair<int, int>> polyResult = addPolynomials(polyP, polyQ);
-            cout << "P(x) + Q(x) = ";
-            displayPolynomial(polyResult);
+            // Perform and display addition
+            performAndDisplayOperation("+", polyP, polyQ, addPolynomials);
         }
               break;
         case 2: {
-        
+            vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x) ");
+            vector<pair<int, int>> polyQ = inputAndDisplayPolynomial("Q(x) ");
+
+            performAndDisplayOperation("-", polyP, polyQ, subtractPolynomials); 
+           
+
         }
               break;
 
