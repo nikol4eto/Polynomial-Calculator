@@ -166,6 +166,21 @@ void performAndDisplayOperation(const string& operationName,
     vector<pair<int, int>> result = operation(poly1, poly2);
     displayPolynomial(result);
 }
+// Function to multiply a polynomial by a scalar
+vector<pair<int, int>> multiplyByScalar(const vector<pair<int, int>>& poly, const pair<int, int>& scalar) {
+    vector<pair<int, int>> result;
+
+    for (const auto& term : poly) {
+        int numerator = term.first * scalar.first;
+        int denominator = term.second * scalar.second;
+
+        pair<int, int> newTerm = { numerator, denominator };
+        simplify(newTerm);
+        result.push_back(newTerm);
+    }
+
+    return result;
+}
 
 int main() {
     int numberOfChoice;
@@ -207,7 +222,7 @@ int main() {
             vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x) ");
             vector<pair<int, int>> polyQ = inputAndDisplayPolynomial("Q(x) ");
 
-            performAndDisplayOperation("-", polyP, polyQ, subtractPolynomials); 
+            performAndDisplayOperation("-", polyP, polyQ, subtractPolynomials);
             cout << endl;
         }
               break;
@@ -224,7 +239,27 @@ int main() {
               break;
 
         case 4: {
-          
+
+        }
+              break;
+        case 5: {
+            vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x) ");
+
+            cout << "Enter scalar (format: numerator/denominator or just numerator)>> ";
+            int numerator, denominator = 1;
+            char slash;
+            cin >> numerator;
+            if (cin.peek() == '/') {
+                cin >> slash >> denominator;
+            }
+
+            pair<int, int> scalar = { numerator, denominator };
+            simplify(scalar);
+
+            vector<pair<int, int>> result = multiplyByScalar(polyP, scalar);
+            cout << "Result: ";
+            displayPolynomial(result);
+            cout << endl;
         }
               break;
 
