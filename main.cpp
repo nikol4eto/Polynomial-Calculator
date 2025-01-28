@@ -1,3 +1,16 @@
+/*
+ * Solution to course project # 4
+ * Introduction to programming course
+ * Faculty of Mathematics and Informatics of Sofia University
+ * Winter semester 2024-2025
+ *
+ * @author Nikol Tsanova
+ * @idnumber 4MI0600527
+ * @compiler VC
+ *
+ * <main file, run it to start the program>
+ */
+
 #include <iostream>
 #include <vector>
 
@@ -13,7 +26,6 @@ int gcd(int a, int b) {
     return a;
 }
 
-// Function to compute the least common divisor
 // LCM formula: (a * b) / GCD(a, b)
 int lcm(int a, int b) {
     return abs(a * b) / gcd(a, b);
@@ -152,7 +164,6 @@ void displayPolynomial(const vector < pair < int, int >>& poly) {
     cout << endl;
 }
 
-// Input and display a polynomial
 // The polynoms are inputed in desending order but saved as vector in assending order of deg
 vector < pair < int, int >> inputAndDisplayPolynomial(const string& polyName) {
     vector < pair < int, int >> poly;
@@ -512,6 +523,172 @@ vector < pair < int, int >> multiplyByScalar(const vector < pair < int, int >>& 
     return result;
 }
 
+//func 3 display below
+void displayCaseThree() {
+    // Input two polynomials
+    vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x) ");
+    vector<pair<int, int>> polyQ = inputAndDisplayPolynomial("Q(x) ");
+
+    // Multiply the polynomials
+    cout << "P(x) * Q(x) = ";
+    vector<pair<int, int>> result = multiplyPolynomials(polyP, polyQ);
+
+    // Display the result
+    displayPolynomial(result);
+}
+
+//func 5 is below that comment display
+void multiplicationOfPolynomWithRationalNumber() {
+    // Input the polynomial
+    vector<pair<int, int>> polyP = inputAndDisplayPolynomial("P(x)");
+
+    // Input the scalar value
+    cout << "Enter scalar (format: numerator/denominator or just numerator)>> ";
+    int numerator, denominator = 1;
+    char slash;
+    cin >> numerator;
+    if (cin.peek() == '/') {
+        cin >> slash >> denominator;
+    }
+
+    pair<int, int> scalar = { numerator, denominator };
+    simplify(scalar); // Simplify the scalar if necessary
+
+    // Multiply the polynomial by the scalar
+    vector<pair<int, int>> result = multiplyByScalar(polyP, scalar);
+
+    // Display the result
+    cout << "Result: ";
+    displayPolynomial(result);
+    cout << endl;
+}
+
+//func 9 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+// Function to represent a polynomial in terms of (x+a)
+void representInPowersOfXPlusA() {
+    // Input the polynomial P(x)
+    vector<pair<int, int>> poly;
+    inputPolynomial(poly);
+
+    // Input the rational number a
+    cout << "Enter rational number a (format: numerator/denominator or just numerator)>> ";
+    int aNumerator, aDenominator = 1;
+    char slash;
+    cin >> aNumerator;
+    if (cin.peek() == '/') cin >> slash >> aDenominator;
+    pair<int, int> a = { aNumerator, aDenominator };
+    simplify(a);
+
+    // Initialize transformed polynomial
+    vector<pair<int, int>> transformed(poly.size(), { 0, 1 });
+
+    // Perform transformation using binomial expansion
+    for (int i = poly.size() - 1; i >= 0; --i) { // Each term in P(x)
+        pair<int, int> coeff = poly[i];
+
+        for (int j = i; j >= 0; --j) { // Expand (x+a)^i
+            // Compute binomial coefficient C(i, j)
+            int binCoeff = 1;
+            for (int k = 0; k < (i - j); ++k) binCoeff = binCoeff * (i - k) / (k + 1);
+
+            // Compute term = coeff * C(i, j) * a^(i-j)
+            pair<int, int> term = multiplyFractions(coeff, { binCoeff, 1 });
+            pair<int, int> aPower = { 1, 1 };
+            for (int k = 0; k < (i - j); ++k) {
+                aPower = multiplyFractions(aPower, a);
+            }
+            term = multiplyFractions(term, aPower);
+
+            // Add term to (x+a)^j
+            transformed[j] = addFractions(transformed[j], term);
+        }
+    }
+
+    // Display the transformed polynomial
+    cout << "P(x+" << a.first;
+    if (a.second != 1) cout << "/" << a.second;
+    cout << ") = ";
+    displayPolynomial(transformed);
+}
+
+//func 10 e pod tozi komentar, ne raboti mnogo dobre, poneje pri dvoen koren ne otbelqzva che e dvoen, ne znam kak da go opravq
+vector<int> findDivisors(int num) {
+    vector<int> divisors;
+    num = abs(num);
+    for (int i = 1; i <= sqrt(num); ++i) {
+        if (num % i == 0) {
+            divisors.push_back(i);
+            if (i != num / i) {
+                divisors.push_back(num / i);
+            }
+        }
+    }
+    return divisors;
+}
+
+pair<int, int> evaluatePolynomial(const vector<pair<int, int>>& poly, const pair<int, int>& x) {
+    pair<int, int> result = { 0, 1 }; // Initialize to 0
+    for (int i = poly.size() - 1; i >= 0; --i) {
+        pair<int, int> term = poly[i];
+        pair<int, int> xPower = { 1, 1 }; // Initialize x^i as 1
+
+        // Compute x^i
+        for (int j = 0; j < i; ++j) {
+            xPower = multiplyFractions(xPower, x);
+        }
+
+        // Multiply coefficient by x^i
+        term = multiplyFractions(term, xPower);
+
+        // Add to the result
+        result = addFractions(result, term);
+    }
+    simplify(result); // Simplify the result
+    return result;
+}
+
+void findAndDisplayRationalRoots(const vector<pair<int, int>>& poly) {
+    int degree = poly.size() - 1;
+    if (degree < 1) {
+        cout << "Polynomial degree must be at least 1." << endl;
+        return;
+    }
+
+    // Leading coefficient and constant term
+    pair<int, int> leadingCoefficient = poly[degree];
+    pair<int, int> constantTerm = poly[0];
+
+    // Generate potential rational roots (p/q)
+    vector<int> pValues = findDivisors(constantTerm.first);
+    vector<int> qValues = findDivisors(leadingCoefficient.first);
+
+    vector<pair<int, int>> rationalRoots;
+
+    for (int p : pValues) {
+        for (int q : qValues) {
+            pair<int, int> root1 = { p, q };
+            pair<int, int> root2 = { -p, q };
+            simplify(root1);
+            simplify(root2);
+
+            // Check if root1 and root2 are actual roots
+            if (evaluatePolynomial(poly, root1) == make_pair(0, 1)) {
+                rationalRoots.push_back(root1);
+            }
+            if (evaluatePolynomial(poly, root2) == make_pair(0, 1)) {
+                rationalRoots.push_back(root2);
+            }
+        }
+    }
+
+    // Display rational roots
+    cout << "RATIONAL ROOTS:" << endl;
+    for (const auto& root : rationalRoots) {
+        cout << "x = " << root.first << "/" << root.second << endl;
+    }
+}
+
+
 int main() {
     int numberOfChoice;
     cout << "Welcome to Polynomial Calculator - ";
@@ -535,64 +712,33 @@ int main() {
         cin >> numberOfChoice;
         switch (numberOfChoice) {
         case 1: {
-            // Perform and display addition
             performAndDisplayOperation("+", addPolynomials);
         }
               break;
 
         case 2: {
-            // Perform and display subtraction
             performAndDisplayOperation("-", subtractPolynomials);
         }
               break;
 
-        case 3: {
-            vector < pair < int, int >> polyP = inputAndDisplayPolynomial("P(x) ");
-            vector < pair < int, int >> polyQ = inputAndDisplayPolynomial("Q(x) ");
-
-            cout << "P(x) * Q(x) = ";
-            vector < pair < int, int >> result = multiplyPolynomials(polyP, polyQ);
-            displayPolynomial(result);
-            cout << endl; // Add blank line after the operation
-        }
-              break;
+        case 3:
+            displayCaseThree();
+            break;
 
         case 4:
-            // Perform and display the quotient and the remainder of the division.
             dividePolynomialsWithInput();
             break;
 
-        case 5: {
-            vector < pair < int, int >> polyP = inputAndDisplayPolynomial("P(x) ");
+        case 5:
+            multiplicationOfPolynomWithRationalNumber();
+            break;
 
-            cout << "Enter scalar (format: numerator/denominator or just numerator)>> ";
-            int numerator, denominator = 1;
-            char slash;
-            cin >> numerator;
-            if (cin.peek() == '/') {
-                cin >> slash >> denominator;
-            }
-
-            pair < int, int > scalar = {
-                numerator,
-                denominator
-            };
-            simplify(scalar);
-
-            vector < pair < int, int >> result = multiplyByScalar(polyP, scalar);
-            cout << "Result: ";
-            displayPolynomial(result);
-            cout << endl;
-        }
-              break;
 
         case 6:
-            // Calculates the value of a polynomial for a given rational number
             evaluatePolynomial();
             break;
 
         case 7:
-            //
             gcdPolynomials();
             break;
 
@@ -600,7 +746,16 @@ int main() {
             vietFormulas();
             break;
 
-            // Moved the if to the switch and added an early return instead of breaking the while loop and then returning
+        case 9:
+            representInPowersOfXPlusA();
+            break;
+
+        case 10: {
+            vector<pair<int, int>> poly = inputAndDisplayPolynomial("P(x)");
+            findAndDisplayRationalRoots(poly);
+            break;
+        }
+
         case 11: {
             cout << "I hope i helped, have a nice day!" << endl;
             return 0;
