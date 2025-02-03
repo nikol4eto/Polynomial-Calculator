@@ -16,6 +16,7 @@
 
 using namespace std;
 
+//<--------------------------------------------------------------------------------------------------------------------------------------------------->
 // Function to compute the greatest common divisor
 int gcd(int a, int b) {
     while (b != 0) {
@@ -163,6 +164,8 @@ void displayPolynomial(const vector < pair < int, int >>& poly) {
 
     cout << endl;
 }
+
+//<--------------------------------------------------------------------------------------------------------------------------------------------------->
 
 // The polynoms are inputed in desending order but saved as vector in assending order of deg
 vector < pair < int, int >> inputAndDisplayPolynomial(const string& polyName) {
@@ -563,54 +566,6 @@ void multiplicationOfPolynomWithRationalNumber() {
     cout << endl;
 }
 
-//func 9 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-// Function to represent a polynomial in terms of (x+a)
-void representInPowersOfXPlusA() {
-    // Input the polynomial P(x)
-    vector<pair<int, int>> poly;
-    inputPolynomial(poly);
-
-    // Input the rational number a
-    cout << "Enter rational number a (format: numerator/denominator or just numerator)>> ";
-    int aNumerator, aDenominator = 1;
-    char slash;
-    cin >> aNumerator;
-    if (cin.peek() == '/') cin >> slash >> aDenominator;
-    pair<int, int> a = { aNumerator, aDenominator };
-    simplify(a);
-
-    // Initialize transformed polynomial
-    vector<pair<int, int>> transformed(poly.size(), { 0, 1 });
-
-    // Perform transformation using binomial expansion
-    for (int i = poly.size() - 1; i >= 0; --i) { // Each term in P(x)
-        pair<int, int> coeff = poly[i];
-
-        for (int j = i; j >= 0; --j) { // Expand (x+a)^i
-            // Compute binomial coefficient C(i, j)
-            int binCoeff = 1;
-            for (int k = 0; k < (i - j); ++k) binCoeff = binCoeff * (i - k) / (k + 1);
-
-            // Compute term = coeff * C(i, j) * a^(i-j)
-            pair<int, int> term = multiplyFractions(coeff, { binCoeff, 1 });
-            pair<int, int> aPower = { 1, 1 };
-            for (int k = 0; k < (i - j); ++k) {
-                aPower = multiplyFractions(aPower, a);
-            }
-            term = multiplyFractions(term, aPower);
-
-            // Add term to (x+a)^j
-            transformed[j] = addFractions(transformed[j], term);
-        }
-    }
-
-    // Display the transformed polynomial
-    cout << "P(x+" << a.first;
-    if (a.second != 1) cout << "/" << a.second;
-    cout << ") = ";
-    displayPolynomial(transformed);
-}
-
 //func 10 e pod tozi komentar, ne raboti mnogo dobre, poneje pri dvoen koren ne otbelqzva che e dvoen, ne znam kak da go opravq
 vector<int> findDivisors(int num) {
     vector<int> divisors;
@@ -746,8 +701,8 @@ int main() {
             vietFormulas();
             break;
 
-        case 9:
-            representInPowersOfXPlusA();
+        case 9: 
+            cout << "I'm sorry, this functionality is too hard to develop.";
             break;
 
         case 10: {
